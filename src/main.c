@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <packet.h>
+#include <ruleset.h>
 
 int main(int argc, char **argv)
 {
@@ -7,15 +8,13 @@ int main(int argc, char **argv)
     size_t pinfo_size;
     struct packet pkt;
 
-    printf("Enter packet info: ");
-    getline(&pinfo, &pinfo_size, stdin);
-    if (packet_parse(&pkt, pinfo)) {
-        printf("FAILED\n");
-    } else {
-        printf("SUCCESS\n");
-        printf("Source address: %d:%d\n", pkt.src, pkt.src_port);
-        printf("Destination address: %d:%d\n", pkt.dst, pkt.dst_port);
-        printf("Protocol: %s\n", pkt.proto == PROTO_TCP? "TCP" : "UDP");
+    while (getline(&pinfo, &pinfo_size, stdin) != EOF) {
+        packet_parse(&pkt, pinfo);
+
+        if (ruleset_packet_check(ruleset, ruleset_len, &pkt) == VERDICT_ACCEPT)
+            printf("ACCEPT\n");
+        else
+            printf("DROP\n");
     }
 
     return 0;
