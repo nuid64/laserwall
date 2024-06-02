@@ -1,0 +1,67 @@
+#!/bin/bash
+
+TEST_INPUT1=$(cat <<EOF
+10.0.1.11    1.1.1.1  1 1 6
+10.0.2.12    1.1.1.1  1 1 6
+10.0.2.12    8.8.8.8  1 1 6
+10.0.3.13    0.0.0.0  1 1 17
+0.0.0.0      1.2.3.4  1 1 17
+0.0.0.0      1.2.3.4  1 1 6
+0.0.0.0      10.0.9.1 1 1 6
+10.0.5.255   0.0.0.0  1 1 17
+EOF
+)
+
+EXPECTED_OUTPUT1=$(cat <<EOF
+ACCEPT
+DROP
+ACCEPT
+ACCEPT
+DROP
+ACCEPT
+DROP
+ACCEPT
+EOF
+)
+
+PROGRAM_OUTPUT=$(echo "$TEST_INPUT1" | ./laserwall)
+
+if [ "$PROGRAM_OUTPUT" != "$EXPECTED_OUTPUT1" ]; then
+    echo "Test 1 failed"
+    echo "--Expected--"
+    echo "$EXPECTED_OUTPUT1"
+    echo "--Got--"
+    echo "$PROGRAM_OUTPUT"
+    exit
+fi
+
+TEST_INPUT2=$(cat <<EOF
+10.0.1.11 1.1.1.1 5     9   32
+10.0.2.12 1.1.1.1 18    4   64
+10.0.2.12 8.8.8.8 255   256  6
+10.0.2.12 8.8.8.8 65535 8   17
+10.0.3.13 0.0.0.0 2     1   32
+EOF
+)
+
+EXPECTED_OUTPUT2=$(cat <<EOF
+ACCEPT
+DROP
+ACCEPT
+ACCEPT
+ACCEPT
+EOF
+)
+
+PROGRAM_OUTPUT=$(echo "$TEST_INPUT2" | ./laserwall 2)
+
+if [ "$PROGRAM_OUTPUT" != "$EXPECTED_OUTPUT2" ]; then
+    echo "Test 2 failed"
+    echo "--Expected--"
+    echo "$EXPECTED_OUTPUT2"
+    echo "--Got--"
+    echo "$PROGRAM_OUTPUT"
+    exit
+fi
+
+echo "Tests passed"
