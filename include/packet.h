@@ -6,6 +6,8 @@
 typedef enum{
     PROTO_TCP = 6,
     PROTO_UDP = 17,
+    PROTO_QUIC = 32,
+    PROTO_FTP = 64,
     PROTO_ANY,
 } protocol;
 
