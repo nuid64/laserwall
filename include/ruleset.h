@@ -20,7 +20,7 @@
       .src_port = p_src_port, .dst_port = p_dst_port,                                                             \
       .proto = p_proto, .verdict = p_verdict }
 
-static struct rule ruleset[] = {
+static struct rule ruleset1[] = {
     FIREWALL_RULE("010.000.001.011", 32, PORT_ANY, "001.001.001.001", 32, PORT_ANY, PROTO_TCP, VERDICT_ACCEPT),
     FIREWALL_RULE("010.000.002.012", 32, PORT_ANY, "001.001.001.001", 32, PORT_ANY, PROTO_TCP, VERDICT_DROP),
     FIREWALL_RULE("010.000.002.012", 32, PORT_ANY, "008.008.008.008", 32, PORT_ANY, PROTO_TCP, VERDICT_ACCEPT),
@@ -31,6 +31,16 @@ static struct rule ruleset[] = {
     FIREWALL_RULE("010.000.005.000", 24, PORT_ANY, "000.000.000.000",  0, PORT_ANY, PROTO_ANY, VERDICT_ACCEPT),
 };
 
-static size_t ruleset_len = sizeof(ruleset) / sizeof(*ruleset);
+static size_t ruleset1_len = sizeof(ruleset1) / sizeof(*ruleset1);
+
+static struct rule ruleset2[] = {
+    FIREWALL_RULE("010.000.001.011", 32, PORT_ANY, "001.001.001.001", 32, PORT_ANY, PROTO_QUIC, VERDICT_ACCEPT),
+    FIREWALL_RULE("010.000.002.012", 32, PORT_ANY, "001.001.001.001", 32, PORT_ANY, PROTO_FTP, VERDICT_DROP),
+    FIREWALL_RULE("010.000.002.012", 32, PORT_ANY, "008.008.008.008", 32,        1, PROTO_TCP, VERDICT_ACCEPT),
+    FIREWALL_RULE("010.000.002.012", 32,    65535, "008.008.008.008", 32, PORT_ANY, PROTO_UDP, VERDICT_ACCEPT),
+    FIREWALL_RULE("010.000.003.013", 32, PORT_ANY, "000.000.000.000",  0, PORT_ANY, PROTO_ANY, VERDICT_ACCEPT),
+};
+
+static size_t ruleset2_len = sizeof(ruleset2) / sizeof(*ruleset2);
 
 verdict ruleset_packet_check(struct rule *ruleset, size_t ruleset_len, struct packet *pkt);
